@@ -2,6 +2,7 @@ class CalcController{
 
     constructor(){
 
+        this._operation = [];
         this._locale = 'pt-BR';
         this._displayCalcEl = document.querySelector("#display");
         this._dateEl = document.querySelector("#data");
@@ -15,14 +16,17 @@ class CalcController{
 
         this.setDisplayDateTime();
 
+        //A cada um segundo irá atualizar a hora
         setInterval(()=>{
             this.setDisplayDateTime();
         }, 1000);
 
     }
 
+    //Feito para clique ou arrastar em cima do botão
     addEventListenerAll(element, events, fn){
 
+        //para cada espaço irá pegar um evento ex: click drag mouseup
         events.split(' ').forEach(event => {
 
             element.addEventListener(event, fn, false);
@@ -31,17 +35,146 @@ class CalcController{
 
     }
 
+    //Apaga tudo no vetor
+    btnAC(){
+        this._operation = [];
+    }
+
+    //apaga o ultimo lugar do vetor
+    btnCE(){
+        this._operation.pop();
+    }
+
+    //pega o ultimo lugar do vetor
+    getLastOperation(){
+
+        return this._operation[this._operation.length-1];
+
+    }
+
+    //Colocar proximo numero dentro do array junto
+    setLastOperation(value){
+
+        this._operation[this._operation.length-1] = value;
+        
+    }
+
+    isOperator(value){
+
+        return (['+','*','-','%','/'].indexOf(value) > -1);
+
+    }
+
+    addOperation(value){
+
+        //se o botão que foi para o vetor não for um numero
+        if(isNaN(this.getLastOperation())){
+            //string
+            if(this.isOperator(value)){
+                //Troca o ultimo array
+                this.setLastOperation(value);
+
+            }else if(isNaN(value)){
+
+                //outra coisa
+
+            }else{
+
+                //Primeiro numero adicionado, pois o primeiro é undefined
+                //Assim isNan da true
+                this._operation.push(value);
+
+            }
+
+        }else{
+            //number
+            let newValue = this.getLastOperation().toString() + value.toString();
+            //adiciona no vetor
+            this.setLastOperation(parseInt(newValue));
+
+
+
+        }
+        console.log(this._operation);
+
+    }
+
+    //Algum botão inválido, usado apenas no defaul case
+    setError(){
+        this.displayCalc = "Error";
+    }
+
+    //Pegar o botão que foi pressionado
+    execBtn(value){
+
+        switch(value){
+
+            case 'ac':
+                this.btnAC();
+                break;
+            case 'ce':
+                this.btnCE();
+                break;
+            case 'soma':
+                this.addOperation('+');
+                break;
+            case 'subtracao':
+            this.addOperation('-');
+                break;
+            case 'multiplicacao':
+            this.addOperation('*');
+                break;
+            case 'divisao':
+            this.addOperation('/');
+                break;
+            case 'porcento':
+            this.addOperation('%');
+                break;
+            case 'igual':
+
+                break;
+            case 'ponto':
+            this.addOperation('.');
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                this.addOperation(parseInt(value));
+                break;
+
+            defaut:
+                this.setError();
+                break;
+        }
+
+    }
+
+    //Clique nos botões
     initButtonsEvents(){
 
+        //Botões validos
         let buttons = document.querySelectorAll("#buttons > g, #parts > g");
         
+        //para cada botão
         buttons.forEach((btn, index)=>{
 
+            //Pega o clique e manda para o execBtn
             this.addEventListenerAll(btn, "click drag", e =>{
 
-                console.log(btn.className.baseVal.replace("btn-",""));
+                //Pegando o botão da classe e tirando o nome da classe para ir apenas o valor
+                let textBtn = btn.className.baseVal.replace("btn-","");
+
+                this.execBtn(textBtn);
 
             });
+
 
             this.addEventListenerAll(btn, "mouseover mouseup mousedown",e => {
                 btn.style.cursor = "pointer";
@@ -50,6 +183,7 @@ class CalcController{
         })
     }
 
+    //Setando data e hora
     setDisplayDateTime(){
         this.displayDate = this.atualDate.toLocaleDateString(this._locale);
         this.displayTime = this.atualDate.toLocaleTimeString(this._locale);
