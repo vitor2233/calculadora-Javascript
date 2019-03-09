@@ -190,7 +190,7 @@ class CalcController{
                 this.addOperation(parseInt(value));
                 break;
 
-            defaut:
+            default:
                 this.setError();
                 break;
         }
