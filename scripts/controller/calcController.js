@@ -59,9 +59,40 @@ class CalcController{
         
     }
 
+    //Verificar se o botão é alguma dessas operações, true or false
     isOperator(value){
 
         return (['+','*','-','%','/'].indexOf(value) > -1);
+
+    }
+
+    pushOperation(value){
+        //Verificar se há mais que 3 itens no array
+        this._operation.push(value);
+
+        if(this._operation.length > 3){
+
+
+            this.calc();
+
+        }
+
+    }
+
+    calc(){
+
+        let last = this._operation.pop();
+
+        //join serve para tirar as virgulas do array
+        //Ex: 10,'+',90 = 10+90
+        let result = eval(this._operation.join(""));
+
+        this._operation = [result, last];
+    }
+
+    setLastNumberToDisplay(){
+
+
 
     }
 
@@ -77,25 +108,35 @@ class CalcController{
             }else if(isNaN(value)){
 
                 //outra coisa
+                console.log('outra coisa', value);
 
             }else{
 
                 //Primeiro numero adicionado, pois o primeiro é undefined
                 //Assim isNan da true
-                this._operation.push(value);
+                this.pushOperation(value);
 
             }
 
         }else{
+
+            //se for operador irá adicionar um no array
+            if(this.isOperator(value)){
+
+                this.pushOperation(value);
+
+            }else{//Se não realmente é um numero então irá adicionar junto com o ultimo numero
+
             //number
             let newValue = this.getLastOperation().toString() + value.toString();
-            //adiciona no vetor
+            //adiciona no array
             this.setLastOperation(parseInt(newValue));
 
+            this.setLastNumberToDisplay();
 
+            }
 
         }
-        console.log(this._operation);
 
     }
 
