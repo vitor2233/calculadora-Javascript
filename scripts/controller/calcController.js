@@ -12,6 +12,7 @@ class CalcController{
         this._atualDate;
         this.initialize();
         this.initButtonsEvents();
+        this.initKeyBoard();
     }
 
     initialize(){
@@ -24,6 +25,51 @@ class CalcController{
             this.setDisplayDateTime();
         }, 1000);
 
+    }
+
+    initKeyBoard(){
+        //Pegando os eventos do teclado
+
+        document.addEventListener('keyup', e=>{
+
+            switch(e.key){
+
+                case 'Escape':
+                    this.btnAC();
+                    break;
+                case 'Backspace':
+                    this.btnCE();
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                    this.addOperation(e.key);
+                    break;
+                case 'Enter':
+                case '=':
+                this.calc();
+                    break;
+                case '.':
+                case ',':
+                this.addDot();
+                    break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    this.addOperation(parseInt(e.key));
+                    break;
+            }
+
+        });
     }
 
     //Feito para clique ou arrastar em cima do botão
@@ -334,7 +380,7 @@ class CalcController{
     }
 
     get displayCalc(){
-        return _displayCalcEl.innerHTML
+        return _displayCalcEl.innerHTML;
     }
     set displayCalc(value){
         this._displayCalcEl.innerHTML = value;
