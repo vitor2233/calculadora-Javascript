@@ -41,6 +41,8 @@ class CalcController{
     //Apaga tudo no vetor
     btnAC(){
         this._operation = [];
+        this._lastNumber = '';
+        this._lastOperator = '';
         this.setLastNumberToDisplay();
     }
 
@@ -180,11 +182,6 @@ class CalcController{
                 //Troca o ultimo array
                 this.setLastOperation(value);
 
-            }else if(isNaN(value)){
-
-                //outra coisa
-                console.log('outra coisa', value);
-
             }else{
 
                 //Primeiro numero adicionado, pois o primeiro é undefined
@@ -206,7 +203,7 @@ class CalcController{
             //number
             let newValue = this.getLastOperation().toString() + value.toString();
             //adiciona no array
-            this.setLastOperation(parseInt(newValue));
+            this.setLastOperation(newValue);
 
             this.setLastNumberToDisplay();
 
@@ -219,6 +216,22 @@ class CalcController{
     //Algum botão inválido, usado apenas no defaul case
     setError(){
         this.displayCalc = "Error";
+    }
+
+    addDot(){
+
+        let lastOperation = this.getLastOperation();
+
+        //Não deixar adicionar dois pontos na mesma operação
+        if(typeof lastOperation === 'string' && lastOperation.split('').indexOf('.') > -1) return;
+
+        if(this.isOperator(lastOperation) || !lastOperation){
+            this.pushOperation('0.');
+        }else{
+            this.setLastOperation(lastOperation.toString() + '.');
+        }
+        this.setLastNumberToDisplay();
+
     }
 
     //Pegar o botão que foi pressionado
@@ -251,7 +264,7 @@ class CalcController{
             this.calc();
                 break;
             case 'ponto':
-            this.addOperation('.');
+            this.addDot();
                 break;
             case '0':
             case '1':
