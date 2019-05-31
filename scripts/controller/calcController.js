@@ -137,7 +137,12 @@ class CalcController{
 
         //join serve para tirar as virgulas do array
         //Ex: 10,'+',90 = 10+90
-        return eval(this._operation.join(""));
+        try{
+            return eval(this._operation.join(""));
+        }catch(e){
+            this.setError();
+        }
+
     }
 
     calc(){
